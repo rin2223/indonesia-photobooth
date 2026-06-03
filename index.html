@@ -1,0 +1,91 @@
+<!DOCTYPE html><html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Photobooth Indonesia</title><style>
+body{
+margin:0;
+font-family:Arial,sans-serif;
+background:linear-gradient(#c40000,#ff4d4d);
+text-align:center;
+color:white;
+padding:20px;
+}
+
+h1{
+font-size:40px;
+margin-bottom:5px;
+}
+
+h3{
+margin-top:0;
+font-weight:normal;
+}
+
+video{
+width:90%;
+max-width:400px;
+border-radius:20px;
+border:5px solid white;
+}
+
+button{
+padding:15px 25px;
+font-size:18px;
+margin-top:20px;
+border:none;
+border-radius:15px;
+cursor:pointer;
+}
+
+#countdown{
+font-size:60px;
+margin:20px;
+font-weight:bold;
+}
+
+canvas{
+display:none;
+}
+</style></head>
+<body><h1>إندونيسيا</h1>
+<h3>معرض الثقافة الإندونيسية</h3><video id="video" autoplay playsinline></video>
+
+<div id="countdown"></div><button onclick="startPhotobooth()">
+📸 Mulai Photobooth
+</button><canvas id="canvas"></canvas>
+
+<script>
+
+const video=document.getElementById("video");
+const countdown=document.getElementById("countdown");
+
+navigator.mediaDevices.getUserMedia({
+video:true
+})
+.then(stream=>{
+video.srcObject=stream;
+});
+
+function wait(ms){
+return new Promise(r=>setTimeout(r,ms));
+}
+
+async function startPhotobooth(){
+
+for(let foto=1;foto<=3;foto++){
+
+for(let i=3;i>0;i--){
+countdown.innerText=i;
+await wait(1000);
+}
+
+countdown.innerText="📸";
+await wait(500);
+}
+
+countdown.innerText="Selesai 🎉";
+}
+
+</script></body>
+</html>
