@@ -89,12 +89,13 @@ border-radius:10px;
 .template-card:hover{
 border-color:#b30000;
 }
+
 </style>
 </head>
+
 <body>
 
 <!-- WELCOME -->
-
 <section id="welcome" class="screen active">
 
 <div class="welcome-box">
@@ -109,16 +110,13 @@ border-color:#b30000;
 التقطوا أجمل لحظاتكم واحتفظوا بها ذكرى مميزة
 </p>
 
-<button id="startBtn">
-ابدأ التصوير
-</button>
+<button id="startBtn">ابدأ التصوير</button>
 
 </div>
 
 </section>
 
 <!-- TEMPLATE -->
-
 <section id="template" class="screen">
 
 <h1>Choose Your Template</h1>
@@ -138,69 +136,43 @@ border-color:#b30000;
 </div>
 
 </section>
-<script>
-
-const startBtn=document.getElementById("startBtn");
-
-startBtn.onclick=()=>{
-
-document.getElementById("welcome")
-.classList.remove("active");
-
-document.getElementById("template")
-.classList.add("active");
-
-};
-function openCamera(totalPhotos){
-
-  function openCamera(totalPhotos){
-
-  document.getElementById("template")
-    .classList.remove("active");
-
-  document.getElementById("camera")
-    .classList.add("active");
-
-  navigator.mediaDevices.getUserMedia({
-    video:{
-      facingMode:"user"
-    }
-  })
-  .then(stream=>{
-    document.getElementById("video").srcObject = stream;
-  });
-
-  }
-
-}
-</section>
 
 <!-- CAMERA -->
-
 <section id="camera" class="screen">
 
 <h1>Kamera Photobooth</h1>
 
-<p>Pilih timer:</p>
-
-<select>
-  <option>3 Detik</option>
-  <option>5 Detik</option>
-  <option>10 Detik</option>
-</select>
-
-<br><br>
-
-<video id="video"
-autoplay
-playsinline
+<video id="video" autoplay playsinline
 style="width:90%;max-width:400px;border-radius:15px;">
 </video>
 
 </section>
 
 <script>
+
+const startBtn=document.getElementById("startBtn");
+
+startBtn.onclick=()=>{
+
+document.getElementById("welcome").classList.remove("active");
+document.getElementById("template").classList.add("active");
+
+};
+
+function openCamera(totalPhotos){
+
+document.getElementById("template").classList.remove("active");
+document.getElementById("camera").classList.add("active");
+
+navigator.mediaDevices.getUserMedia({
+video:{ facingMode:"user" }
+})
+.then(stream=>{
+document.getElementById("video").srcObject = stream;
+});
+
 }
+
 </script>
 
 </body>
