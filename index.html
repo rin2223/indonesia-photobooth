@@ -167,6 +167,8 @@ style="width:90%;max-width:400px;border-radius:15px;"></video>
 <button>⬇️ Download</button>
 </a>
 
+<canvas id="stripCanvas" style="display:none;"></canvas>
+  
 </section>
 
 <script>
@@ -229,6 +231,41 @@ document.getElementById("video").srcObject = stream;
 
 }
 
+function makeStrip(){
+
+let canvas = document.getElementById("stripCanvas");
+let ctx = canvas.getContext("2d");
+
+let w = 300;
+let h = 400;
+
+canvas.width = w;
+canvas.height = h * window.photosTaken.length;
+
+window.photosTaken.forEach((imgSrc,i)=>{
+
+let img = new Image();
+img.src = imgSrc;
+
+img.onload = ()=>{
+ctx.drawImage(img,0,i*h,w,h);
+
+if(i === window.photosTaken.length - 1){
+
+let final = canvas.toDataURL("image/png");
+
+document.getElementById("preview").src = final;
+document.getElementById("preview").style.display = "block";
+
+document.getElementById("download").href = final;
+document.getElementById("download").style.display = "block";
+
+}
+};
+
+});
+
+  }
 </script>
 
 </body>
