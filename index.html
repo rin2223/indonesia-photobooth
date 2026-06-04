@@ -1,189 +1,158 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="ar">
 <head>
 <meta charset="UTF-8">
-<title>Photobooth Indonesia</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Indonesia Photobooth 2026</title>
 
 <style>
-body{
+*{
 margin:0;
-font-family:Arial;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+background:#f8f2eb;
+min-height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+}
+
+.screen{
+display:none;
+width:100%;
+padding:30px;
 text-align:center;
-color:white;
-background:linear-gradient(135deg,#b30000,#ff4d4d,#ffcc00);
-overflow-x:hidden;
 }
 
-h1{
-margin-top:10px;
-animation:pop 1s infinite alternate;
+.active{
+display:block;
 }
 
-@keyframes pop{
-from{transform:scale(1);}
-to{transform:scale(1.1);}
+.welcome-box{
+max-width:700px;
+margin:auto;
 }
 
-video{
-width:90%;
-max-width:400px;
-border-radius:20px;
-border:5px solid white;
-box-shadow:0 0 20px rgba(0,0,0,0.5);
+.welcome-box h1{
+font-size:42px;
+margin-bottom:20px;
+}
+
+.welcome-box h2{
+margin-bottom:10px;
+}
+
+.welcome-box p{
+margin:20px 0;
+font-size:18px;
 }
 
 button{
-padding:12px 18px;
-font-size:16px;
-margin:10px;
+padding:14px 28px;
 border:none;
 border-radius:10px;
 cursor:pointer;
-background:white;
-color:black;
-font-weight:bold;
+font-size:18px;
 }
 
-canvas{
-margin-top:10px;
-width:90%;
-max-width:320px;
-border:5px solid white;
+#startBtn{
+background:#b30000;
+color:white;
+}
+
+.template-container{
+display:flex;
+gap:20px;
+justify-content:center;
+flex-wrap:wrap;
+margin-top:40px;
+}
+
+.template-card{
+width:280px;
+padding:15px;
+border:2px solid #ddd;
+border-radius:15px;
+cursor:pointer;
 background:white;
 }
 
-#flash{
-position:fixed;
-top:0;
-left:0;
+.template-card img{
 width:100%;
-height:100%;
-background:white;
-opacity:0;
-pointer-events:none;
+border-radius:10px;
+}
+
+.template-card:hover{
+border-color:#b30000;
 }
 </style>
 </head>
-
 <body>
 
-<div id="flash"></div>
+<!-- WELCOME -->
 
-<h1>إندونيسيا 🇮🇩</h1>
-<h3>معرض الثقافة الإندونيسية</h3>
+<section id="welcome" class="screen active">
 
-<video id="video" autoplay></video>
+<div class="welcome-box">
 
-<br>
+<h1>مرحبًا بكم في معرض إندونيسيا</h1>
 
-<button onclick="start()">📸 Mulai 3 Foto</button>
-<button onclick="download()">⬇ Download</button>
+<h2>المقام في</h2>
 
-<canvas id="canvas"></canvas>
+<h2>كلية عائشة بنت أبي بكر</h2>
 
-<audio id="shutter">
-<source src="https://www.soundjay.com/camera/sounds/camera-shutter-click-01.mp3">
-</audio>
+<p>
+التقطوا أجمل لحظاتكم واحتفظوا بها ذكرى مميزة
+</p>
+
+<button id="startBtn">
+ابدأ التصوير
+</button>
+
+</div>
+
+</section>
+
+<!-- TEMPLATE -->
+
+<section id="template" class="screen">
+
+<h1>Choose Your Template</h1>
+
+<div class="template-container">
+
+<div class="template-card">
+<img src="assets/frame-3.png">
+<h3>3 Photos</h3>
+</div>
+
+<div class="template-card">
+<img src="assets/frame-4.png">
+<h3>4 Photos</h3>
+</div>
+
+</div>
+
+</section>
 
 <script>
-const video=document.getElementById("video");
-const canvas=document.getElementById("canvas");
-const ctx=canvas.getContext("2d");
-const flash=document.getElementById("flash");
-const shutter=document.getElementById("shutter");
 
-navigator.mediaDevices.getUserMedia({video:true})
-.then(stream=>{
-video.srcObject=stream;
-});
+const startBtn=document.getElementById("startBtn");
 
-let shots=[];
+startBtn.onclick=()=>{
 
-function wait(ms){
-return new Promise(r=>setTimeout(r,ms));
-}
+document.getElementById("welcome")
+.classList.remove("active");
 
-function doFlash(){
-flash.style.opacity=1;
-setTimeout(()=>flash.style.opacity=0,200);
-}
+document.getElementById("template")
+.classList.add("active");
 
-async function start(){
+};
 
-shots=[];
-
-for(let i=0;i<3;i++){
-
-await wait(1500);
-
-// countdown kecil efek
-document.body.style.filter="brightness(1.5)";
-setTimeout(()=>document.body.style.filter="none",200);
-
-// flash kamera
-doFlash();
-
-// sound
-shutter.currentTime=0;
-shutter.play();
-
-// capture
-let c=document.createElement("canvas");
-c.width=300;
-c.height=200;
-let cctx=c.getContext("2d");
-cctx.drawImage(video,0,0,300,200);
-
-shots.push(c);
-}
-
-makeStrip();
-}
-
-function makeStrip(){
-
-canvas.width=300;
-canvas.height=650;
-
-// background rame
-let grad=ctx.createLinearGradient(0,0,300,650);
-grad.addColorStop(0,"red");
-grad.addColorStop(0.5,"white");
-grad.addColorStop(1,"red");
-
-ctx.fillStyle=grad;
-ctx.fillRect(0,0,300,650);
-
-// header
-ctx.fillStyle="rgba(0,0,0,0.3)";
-ctx.fillRect(0,0,300,70);
-
-ctx.fillStyle="white";
-ctx.font="14px Arial";
-ctx.fillText("إندونيسيا - معرض الثقافة الإندونيسية",10,40);
-
-let y=90;
-
-for(let img of shots){
-ctx.drawImage(img,10,y,280,170);
-y+=190;
-}
-
-// footer
-ctx.fillStyle="rgba(0,0,0,0.3)";
-ctx.fillRect(0,580,300,70);
-
-ctx.fillStyle="white";
-ctx.fillText("Photobooth Event Indonesia 🇮🇩",40,620);
-}
-
-function download(){
-let link=document.createElement("a");
-link.download="photobooth.png";
-link.href=canvas.toDataURL("image/png");
-link.click();
-}
 </script>
 
 </body>
