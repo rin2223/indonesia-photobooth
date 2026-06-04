@@ -1,95 +1,62 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Indonesia Photobooth 2026</title>
+<title>Photobooth 2026</title>
 
 <style>
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:Arial,sans-serif;
-}
-
 body{
-background:#f8f2eb;
-min-height:100vh;
+margin:0;
+font-family:Arial;
+background:#f5f0ea;
 display:flex;
 justify-content:center;
 align-items:center;
+min-height:100vh;
 }
 
-.screen{
-display:none;
-width:100%;
-padding:30px;
-text-align:center;
-}
-
-.active{
-display:block;
-}
-
-.welcome-box{
-max-width:700px;
-margin:auto;
-}
-
-.welcome-box h1{
-font-size:42px;
-margin-bottom:20px;
-}
-
-.welcome-box h2{
-margin-bottom:10px;
-}
-
-.welcome-box p{
-margin:20px 0;
-font-size:18px;
-}
+.screen{display:none; text-align:center; width:100%;}
+.active{display:block;}
 
 button{
-padding:14px 28px;
+padding:12px 20px;
 border:none;
 border-radius:10px;
 cursor:pointer;
-font-size:18px;
-}
-
-#startBtn{
+font-size:16px;
 background:#b30000;
 color:white;
 }
 
-.template-container{
-display:flex;
-gap:20px;
-justify-content:center;
-flex-wrap:wrap;
-margin-top:40px;
-}
-
 .template-card{
-width:280px;
-padding:15px;
+display:inline-block;
+margin:10px;
+padding:10px;
 border:2px solid #ddd;
-border-radius:15px;
+border-radius:12px;
 cursor:pointer;
+}
+
+video{
+width:300px;
+border-radius:12px;
+margin-top:10px;
+}
+
+#countdown{
+font-size:60px;
+color:#b30000;
+}
+
+#flash{
+position:fixed;
+top:0;left:0;
+width:100%;height:100%;
 background:white;
+opacity:0;
+pointer-events:none;
 }
-
-.template-card img{
-width:100%;
-border-radius:10px;
-}
-
-.template-card:hover{
-border-color:#b30000;
-}
-
 </style>
 </head>
 
@@ -97,182 +64,133 @@ border-color:#b30000;
 
 <!-- WELCOME -->
 <section id="welcome" class="screen active">
-
-<div class="welcome-box">
-
-<h1>مرحبًا بكم في معرض إندونيسيا</h1>
-
-<h2>المقام في</h2>
-
-<h2>كلية عائشة بنت أبي بكر</h2>
-
-<p>
-التقطوا أجمل لحظاتكم واحتفظوا بها ذكرى مميزة
-</p>
-
-<button id="startBtn">ابدأ التصوير</button>
-
-</div>
-
+<h1>Photobooth Indonesia</h1>
+<p>Click start</p>
+<button onclick="goTemplate()">Start</button>
 </section>
 
 <!-- TEMPLATE -->
 <section id="template" class="screen">
-
-<h1>Choose Your Template</h1>
-
-<div class="template-container">
+<h2>Select Frame</h2>
 
 <div class="template-card" onclick="openCamera(3)">
-<img src="assets/frame-3.png">
-<h3>3 Photos</h3>
+<img src="assets/frame-3.png" width="200"><br>
+3 Photos
 </div>
 
 <div class="template-card" onclick="openCamera(4)">
-<img src="assets/frame-4.png">
-<h3>4 Photos</h3>
+<img src="assets/frame-4.png" width="200"><br>
+4 Photos
 </div>
-
-</div>
-
 </section>
 
 <!-- CAMERA -->
 <section id="camera" class="screen">
 
-<h1 id="countdown" style="font-size:60px;color:#b30000;"></h1>
-<div id="flash" style="position:fixed;top:0;left:0;width:100%;height:100%;background:white;opacity:0;pointer-events:none;"></div>
-
-<h1>Kamera Photobooth</h1>
+<h1 id="countdown"></h1>
+<div id="flash"></div>
 
 <select id="timer">
-  <option value="3">3 Detik</option>
-  <option value="5">5 Detik</option>
-  <option value="10">10 Detik</option>
+<option value="3">3 sec</option>
+<option value="5">5 sec</option>
+<option value="10">10 sec</option>
 </select>
 
 <br><br>
 
-<video id="video" autoplay playsinline
-style="width:90%;max-width:400px;border-radius:15px;"></video>
+<video id="video" autoplay playsinline></video>
 
 <br><br>
 
-<button onclick="takePhoto()">📸 Capture</button>
+<button onclick="takePhoto()">Capture</button>
 
 <canvas id="canvas" style="display:none;"></canvas>
 
-<img id="preview" style="width:90%;max-width:400px;margin-top:20px;border-radius:15px;display:none;">
+<br><br>
+
+<img id="preview" style="max-width:300px;display:none;">
 
 <br><br>
 
-<a id="download" style="display:none;" download="photo.png">
-<button>⬇️ Download</button>
+<a id="download" download="photobooth.png" style="display:none;">
+<button>Download</button>
 </a>
 
-<canvas id="stripCanvas"></canvas>
-<img id="preview">
-<a id="download" download="photo.png"></a>
-  
+<canvas id="stripCanvas" style="display:none;"></canvas>
+
 </section>
 
 <script>
 
-const startBtn=document.getElementById("startBtn");
+let stream;
 
-startBtn.onclick=()=>{
-
+function goTemplate(){
 document.getElementById("welcome").classList.remove("active");
 document.getElementById("template").classList.add("active");
+}
 
-};
+function openCamera(total){
+window.totalPhotos = total;
+window.photosTaken = [];
+window.selectedFrame = total;
+
+document.getElementById("template").classList.remove("active");
+document.getElementById("camera").classList.add("active");
+
+navigator.mediaDevices.getUserMedia({video:{facingMode:"user"}})
+.then(s=>{
+stream = s;
+document.getElementById("video").srcObject = stream;
+});
+}
+
 function takePhoto(){
 
-let timer = document.getElementById("timer").value;
+let delay = parseInt(document.getElementById("timer").value);
+let count = delay;
 
-let count = 3;
-let countdownEl = document.getElementById("countdown");
-
-function startCountdown(){
-
-countdownEl.innerText = count;
+let countdown = document.getElementById("countdown");
 
 let interval = setInterval(()=>{
 
 count--;
+countdown.innerText = count;
 
-if(count > 0){
-countdownEl.innerText = count;
-}else{
+if(count <= 0){
 clearInterval(interval);
-countdownEl.innerText = "";
+countdown.innerText = "";
+flash();
+capture();
+}
+},1000);
 
-flashScreen();
-capturePhoto();
+function flash(){
+let f = document.getElementById("flash");
+f.style.opacity = 1;
+setTimeout(()=>f.style.opacity=0,150);
 }
 
-}, 1000);
-
-}
-
-function flashScreen(){
-
-let flash = document.getElementById("flash");
-flash.style.opacity = "1";
-
-setTimeout(()=>{
-flash.style.opacity = "0";
-}, 200);
-
-}
-
-function capturePhoto(){
+function capture(){
 
 let video = document.getElementById("video");
 let canvas = document.getElementById("canvas");
-let preview = document.getElementById("preview");
 
 canvas.width = video.videoWidth;
 canvas.height = video.videoHeight;
 
-canvas.getContext("2d").drawImage(video,0,0);
+let ctx = canvas.getContext("2d");
+ctx.drawImage(video,0,0);
 
 let data = canvas.toDataURL("image/png");
 
 window.photosTaken.push(data);
 
-preview.src = data;
-preview.style.display = "block";
-
 if(window.photosTaken.length < window.totalPhotos){
-setTimeout(takePhoto, 800);
+setTimeout(takePhoto,800);
 }else{
 makeStrip();
-alert("Semua foto selesai 📸");
 }
-
 }
-
-startCountdown();
-
-}
-
-function openCamera(totalPhotos){
-
-window.totalPhotos = totalPhotos;
-window.photosTaken = [];
-window.selectedFrame = totalPhotos; // 👈 ini penting
-
-document.getElementById("template").classList.remove("active");
-document.getElementById("camera").classList.add("active");
-
-navigator.mediaDevices.getUserMedia({
-video:{ facingMode:"user" }
-})
-.then(stream=>{
-document.getElementById("video").srcObject = stream;
-});
-
 }
 
 function makeStrip(){
@@ -280,83 +198,70 @@ function makeStrip(){
 let canvas = document.getElementById("stripCanvas");
 let ctx = canvas.getContext("2d");
 
-let w = 300;
-let h = 400;
-
-canvas.width = w;
-function makeStrip(){
-
-let canvas = document.getElementById("stripCanvas");
-let ctx = canvas.getContext("2d");
-
-// ambil frame sesuai pilihan
 let frame = new Image();
 
-if(window.selectedFrame == 3){
-frame.src = "assets/frame-3.png";
-canvas.width = 400;
-canvas.height = 1000;
-}else{
-frame.src = "assets/frame-4.png";
-canvas.width = 1200;
-canvas.height = 1100;
-}
-
-frame.onload = ()=>{
-
-ctx.drawImage(frame, 0, 0, canvas.width, canvas.height);
-
-// POSISI FOTO
 let positions3 = [
-  {x:30, y:160, w:340, h:240},
-  {x:30, y:430, w:340, h:240},
-  {x:30, y:700, w:340, h:190}
+{x:30,y:160,w:340,h:240},
+{x:30,y:430,w:340,h:240},
+{x:30,y:700,w:340,h:240}
 ];
 
 let positions4 = [
-  {x:60,  y:250, w:520, h:400},
-  {x:620, y:250, w:520, h:400},
-  {x:60,  y:690, w:520, h:400},
-  {x:620, y:690, w:520, h:400}
+{x:60,y:250,w:520,h:400},
+{x:620,y:250,w:520,h:400},
+{x:60,y:690,w:520,h:400},
+{x:620,y:690,w:520,h:400}
 ];
 
-let positions = (window.selectedFrame == 3) ? positions3 : positions4;
+let positions = window.selectedFrame==3 ? positions3 : positions4;
 
-// gambar foto
-window.photosTaken.forEach((imgSrc,i)=>{
-
-let img = new Image();
-img.src = imgSrc;
-
-img.onload = ()=>{
-
-let p = positions[i];
-if(p){
-ctx.drawImage(img, p.x, p.y, p.w, p.h);
+if(window.selectedFrame==3){
+frame.src="assets/frame-3.png";
+canvas.width=400;
+canvas.height=1000;
+}else{
+frame.src="assets/frame-4.png";
+canvas.width=1200;
+canvas.height=1100;
 }
 
-// selesai
-if(i === window.photosTaken.length - 1){
+frame.onload=()=>{
 
-let final = canvas.toDataURL("image/png");
+ctx.drawImage(frame,0,0,canvas.width,canvas.height);
 
-document.getElementById("preview").src = final;
-document.getElementById("preview").style.display = "block";
+window.photosTaken.forEach((src,i)=>{
 
-document.getElementById("download").href = final;
-document.getElementById("download").style.display = "block";
+let img=new Image();
+img.src=src;
 
-alert("Frame selesai 📸🔥");
+img.onload=()=>{
 
+if(positions[i]){
+ctx.drawImage(img,
+positions[i].x,
+positions[i].y,
+positions[i].w,
+positions[i].h);
 }
 
+if(i===window.photosTaken.length-1){
+
+let final=canvas.toDataURL("image/png");
+
+document.getElementById("preview").src=final;
+document.getElementById("preview").style.display="block";
+
+let dl=document.getElementById("download");
+dl.href=final;
+dl.style.display="block";
+
+alert("Done 📸");
+}
 };
-
 });
-
 };
-
 }
+
 </script>
 
 </body>
