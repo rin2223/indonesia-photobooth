@@ -282,19 +282,32 @@ let ctx = canvas.getContext("2d");
 let w = 300;
 let h = 400;
 
-canvas.width = w;
-canvas.height = h * window.photosTaken.length;
+// 1. tentukan frame dari template
+let frame = new Image();
 
+if(window.totalPhotos == 3){
+frame.src = "assets/frame-3.png";
+}else{
+frame.src = "assets/frame-4.png";
+}
+
+frame.onload = ()=>{
+
+// 2. gambar frame dulu (background template kamu)
+ctx.drawImage(frame, 0, 0, canvas.width, canvas.height);
+
+// 3. gambar foto di atas frame
+let header = 100;
 let loaded = 0;
 
-window.photosTaken.forEach((imgSrc, i)=>{
+window.photosTaken.forEach((imgSrc,i)=>{
 
 let img = new Image();
 img.src = imgSrc;
 
 img.onload = ()=>{
 
-ctx.drawImage(img, 0, i * h, w, h);
+ctx.drawImage(img, 0, header + (i*h), w, h);
 
 loaded++;
 
@@ -308,13 +321,15 @@ document.getElementById("preview").style.display = "block";
 document.getElementById("download").href = final;
 document.getElementById("download").style.display = "block";
 
-alert("Strip selesai 📸");
+alert("Selesai pakai template 📸");
 
 }
 
 };
 
 });
+
+};
 
 }
 </script>
