@@ -196,17 +196,26 @@ canvas.getContext("2d").drawImage(video,0,0);
 
 let data = canvas.toDataURL("image/png");
 
+window.photosTaken.push(data);
+
+// tampilkan foto terakhir
 preview.src = data;
 preview.style.display = "block";
 
-let download = document.getElementById("download");
-download.href = data;
-download.style.display = "block";
+if(window.photosTaken.length < window.totalPhotos){
+setTimeout(takePhoto, 800);
+}else{
+alert("Semua foto selesai 📸");
+}
 
 }, timer * 1000);
 
 }
+
 function openCamera(totalPhotos){
+
+window.totalPhotos = totalPhotos;
+window.photosTaken = [];
 
 document.getElementById("template").classList.remove("active");
 document.getElementById("camera").classList.add("active");
