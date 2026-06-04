@@ -142,9 +142,30 @@ border-color:#b30000;
 
 <h1>Kamera Photobooth</h1>
 
+<select id="timer">
+  <option value="3">3 Detik</option>
+  <option value="5">5 Detik</option>
+  <option value="10">10 Detik</option>
+</select>
+
+<br><br>
+
 <video id="video" autoplay playsinline
-style="width:90%;max-width:400px;border-radius:15px;">
-</video>
+style="width:90%;max-width:400px;border-radius:15px;"></video>
+
+<br><br>
+
+<button onclick="takePhoto()">📸 Capture</button>
+
+<canvas id="canvas" style="display:none;"></canvas>
+
+<img id="preview" style="width:90%;max-width:400px;margin-top:20px;border-radius:15px;display:none;">
+
+<br><br>
+
+<a id="download" style="display:none;" download="photo.png">
+<button>⬇️ Download</button>
+</a>
 
 </section>
 
@@ -158,7 +179,33 @@ document.getElementById("welcome").classList.remove("active");
 document.getElementById("template").classList.add("active");
 
 };
+function takePhoto(){
 
+let timer = document.getElementById("timer").value;
+
+setTimeout(()=>{
+
+let video = document.getElementById("video");
+let canvas = document.getElementById("canvas");
+let preview = document.getElementById("preview");
+
+canvas.width = video.videoWidth;
+canvas.height = video.videoHeight;
+
+canvas.getContext("2d").drawImage(video,0,0);
+
+let data = canvas.toDataURL("image/png");
+
+preview.src = data;
+preview.style.display = "block";
+
+let download = document.getElementById("download");
+download.href = data;
+download.style.display = "block";
+
+}, timer * 1000);
+
+}
 function openCamera(totalPhotos){
 
 document.getElementById("template").classList.remove("active");
