@@ -153,8 +153,53 @@ document.getElementById("template")
 };
 function openCamera(totalPhotos){
 
-  alert("Template " + totalPhotos + " foto dipilih");
+  function openCamera(totalPhotos){
 
+  document.getElementById("template")
+    .classList.remove("active");
+
+  document.getElementById("camera")
+    .classList.add("active");
+
+  navigator.mediaDevices.getUserMedia({
+    video:{
+      facingMode:"user"
+    }
+  })
+  .then(stream=>{
+    document.getElementById("video").srcObject = stream;
+  });
+
+  }
+
+}
+</section>
+
+<!-- CAMERA -->
+
+<section id="camera" class="screen">
+
+<h1>Kamera Photobooth</h1>
+
+<p>Pilih timer:</p>
+
+<select>
+  <option>3 Detik</option>
+  <option>5 Detik</option>
+  <option>10 Detik</option>
+</select>
+
+<br><br>
+
+<video id="video"
+autoplay
+playsinline
+style="width:90%;max-width:400px;border-radius:15px;">
+</video>
+
+</section>
+
+<script>
 }
 </script>
 
