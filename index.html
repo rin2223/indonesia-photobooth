@@ -167,7 +167,9 @@ style="width:90%;max-width:400px;border-radius:15px;"></video>
 <button>⬇️ Download</button>
 </a>
 
-<canvas id="stripCanvas" style="display:none;"></canvas>
+<canvas id="stripCanvas"></canvas>
+<img id="preview">
+<a id="download" download="photo.png"></a>
   
 </section>
 
@@ -207,6 +209,7 @@ preview.style.display = "block";
 if(window.photosTaken.length < window.totalPhotos){
 setTimeout(takePhoto, 800);
 }else{
+makeStrip();
 alert("Semua foto selesai 📸");
 }
 
@@ -242,15 +245,20 @@ let h = 400;
 canvas.width = w;
 canvas.height = h * window.photosTaken.length;
 
-window.photosTaken.forEach((imgSrc,i)=>{
+let loaded = 0;
+
+window.photosTaken.forEach((imgSrc, i)=>{
 
 let img = new Image();
 img.src = imgSrc;
 
 img.onload = ()=>{
-ctx.drawImage(img,0,i*h,w,h);
 
-if(i === window.photosTaken.length - 1){
+ctx.drawImage(img, 0, i * h, w, h);
+
+loaded++;
+
+if(loaded === window.photosTaken.length){
 
 let final = canvas.toDataURL("image/png");
 
@@ -260,12 +268,15 @@ document.getElementById("preview").style.display = "block";
 document.getElementById("download").href = final;
 document.getElementById("download").style.display = "block";
 
+alert("Strip selesai 📸");
+
 }
+
 };
 
 });
 
-  }
+}
 </script>
 
 </body>
