@@ -285,6 +285,7 @@ let h = 400;
 canvas.width = w;
 canvas.height = h * window.photosTaken.length;
 
+// STEP 1: gambar semua foto dulu
 let loaded = 0;
 
 window.photosTaken.forEach((imgSrc,i)=>{
@@ -294,11 +295,25 @@ img.src = imgSrc;
 
 img.onload = ()=>{
 
-ctx.drawImage(img, 0, i * h, w, h);
+ctx.drawImage(img, 0, i*h, w, h);
 
 loaded++;
 
 if(loaded === window.photosTaken.length){
+
+// STEP 2: setelah foto selesai → tambah FRAME
+
+let frame = new Image();
+
+// pilih frame dari jumlah foto
+frame.src = (window.totalPhotos == 3)
+? "assets/frame-3.png"
+: "assets/frame-4.png";
+
+frame.onload = ()=>{
+
+// overlay frame di atas semua foto
+ctx.drawImage(frame, 0, 0, canvas.width, canvas.height);
 
 let final = canvas.toDataURL("image/png");
 
@@ -308,7 +323,9 @@ document.getElementById("preview").style.display = "block";
 document.getElementById("download").href = final;
 document.getElementById("download").style.display = "block";
 
-alert("Strip selesai 📸");
+alert("Frame sudah jadi 📸🔥");
+
+};
 
 }
 
