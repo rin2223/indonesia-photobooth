@@ -261,6 +261,7 @@ function openCamera(totalPhotos){
 
 window.totalPhotos = totalPhotos;
 window.photosTaken = [];
+window.selectedFrame = totalPhotos; // 👈 ini penting
 
 document.getElementById("template").classList.remove("active");
 document.getElementById("camera").classList.add("active");
@@ -283,11 +284,45 @@ let w = 300;
 let h = 400;
 
 canvas.width = w;
-canvas.height = h * window.photosTaken.length;
+function makeStrip(){
 
-// STEP 1: gambar semua foto dulu
-let loaded = 0;
+let canvas = document.getElementById("stripCanvas");
+let ctx = canvas.getContext("2d");
 
+// ambil frame sesuai pilihan
+let frame = new Image();
+
+if(window.selectedFrame == 3){
+frame.src = "assets/frame-3.png";
+canvas.width = 400;
+canvas.height = 1000;
+}else{
+frame.src = "assets/frame-4.png";
+canvas.width = 1200;
+canvas.height = 1100;
+}
+
+frame.onload = ()=>{
+
+ctx.drawImage(frame, 0, 0, canvas.width, canvas.height);
+
+// POSISI FOTO
+let positions3 = [
+  {x:30, y:160, w:340, h:240},
+  {x:30, y:430, w:340, h:240},
+  {x:30, y:700, w:340, h:190}
+];
+
+let positions4 = [
+  {x:60,  y:250, w:520, h:400},
+  {x:620, y:250, w:520, h:400},
+  {x:60,  y:690, w:520, h:400},
+  {x:620, y:690, w:520, h:400}
+];
+
+let positions = (window.selectedFrame == 3) ? positions3 : positions4;
+
+// gambar foto
 window.photosTaken.forEach((imgSrc,i)=>{
 
 let img = new Image();
@@ -295,25 +330,13 @@ img.src = imgSrc;
 
 img.onload = ()=>{
 
-ctx.drawImage(img, 0, i*h, w, h);
+let p = positions[i];
+if(p){
+ctx.drawImage(img, p.x, p.y, p.w, p.h);
+}
 
-loaded++;
-
-if(loaded === window.photosTaken.length){
-
-// STEP 2: setelah foto selesai → tambah FRAME
-
-let frame = new Image();
-
-// pilih frame dari jumlah foto
-frame.src = (window.totalPhotos == 3)
-? "assets/frame-3.png"
-: "assets/frame-4.png";
-
-frame.onload = ()=>{
-
-// overlay frame di atas semua foto
-ctx.drawImage(frame, 0, 0, canvas.width, canvas.height);
+// selesai
+if(i === window.photosTaken.length - 1){
 
 let final = canvas.toDataURL("image/png");
 
@@ -323,15 +346,15 @@ document.getElementById("preview").style.display = "block";
 document.getElementById("download").href = final;
 document.getElementById("download").style.display = "block";
 
-alert("Frame sudah jadi 📸🔥");
-
-};
+alert("Frame selesai 📸🔥");
 
 }
 
 };
 
 });
+
+};
 
 }
 </script>
