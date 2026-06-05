@@ -198,8 +198,6 @@ makeStrip();
 
 function makeStrip(){
 
-console.log("makeStrip jalan 🚀");
-
 let c = document.getElementById("strip");
 let ctx = c.getContext("2d");
 
@@ -220,28 +218,18 @@ let positions = (window.selectedFrame == 3)
 
 frame.onload = async () => {
 
-console.log("frame loaded ✅");
-
 c.width = frame.naturalWidth;
 c.height = frame.naturalHeight;
 
 ctx.clearRect(0,0,c.width,c.height);
 
-// safety check
-if(!window.photosTaken || window.photosTaken.length == 0){
-alert("Foto kosong ❌");
-return;
-}
-
+// 1. gambar foto dulu
 for(let i=0;i<window.photosTaken.length;i++){
-
-await new Promise(res=>{
 let img = new Image();
 img.src = window.photosTaken[i];
 
+await new Promise(res=>{
 img.onload = () => {
-console.log("foto load", i);
-
 if(positions[i]){
 ctx.drawImage(img,
 positions[i].x,
@@ -254,34 +242,29 @@ res();
 });
 }
 
-// FRAME DI ATAS
+// 2. overlay frame DI ATAS foto
 ctx.drawImage(frame,0,0,c.width,c.height);
 
 let final = c.toDataURL("image/png");
 
-console.log("strip jadi ✅");
+// tampilkan hasil
+let result = document.getElementById("result");
+result.src = final;
+result.style.display = "block";
 
-document.getElementById("result").src = final;
-document.getElementById("result").style.display = "block";
-
+// download link
 let dl = document.getElementById("download");
 dl.href = final;
-dl.style.display = "block";
 dl.style.display = "inline-block";
 
+generateQR(final);
+
 alert("Selesai 🎉");
-
 };
 
-frame.onerror = () => {
-console.error("frame gagal load ❌");
-alert("Frame tidak ditemukan / path salah");
-};
-
-frame.src = (window.selectedFrame == 3)
+frame.src = window.selectedFrame == 3
 ? "assets/frame-3.png"
 : "assets/frame-4.png";
-
 }
 
 </script>
