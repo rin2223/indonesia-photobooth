@@ -268,6 +268,17 @@ frame.src = window.selectedFrame == 3
 : "assets/frame-4.png";
 }
 
+ function generateQR(url){
+
+document.getElementById("qrcode").innerHTML = "";
+
+new QRCode(document.getElementById("qrcode"), {
+text: url,
+width: 180,
+height: 180
+});
+}
+  
 </script>
 
 </body>
